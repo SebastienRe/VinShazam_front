@@ -1,6 +1,8 @@
 // sign_in_form.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:vinfront/authentification/SauvegardeUser.dart';
 import 'authentification_manager.dart';
 import 'service/authentification_service.dart';
 import 'service/connexion_exception.dart';
@@ -61,11 +63,10 @@ class SignInForm extends StatelessWidget {
 
                   // Imprimer les valeurs dans la console
                   print('Email: $email, Mot de passe: $password');
-                  Map<String, dynamic> result = {
-                    'nom': 'Doe',
-                    'prenom': 'John'
-                  };
-                  // await authService.loginUser(email, password);
+                  Map<String, dynamic> result =
+                      await authService.loginUser(email, password);
+                  Provider.of<UserProvider>(context, listen: false)
+                      .setUser(result);
 
                   // Gérer la réponse de l'API ici
                   print('Réponse de l\'API: $result');
@@ -79,10 +80,7 @@ class SignInForm extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Profil(
-                        nom: result['nom'],
-                        prenom: result['prenom'],
-                      ),
+                      builder: (context) => Profil(),
                     ),
                   );
                 } catch (e) {

@@ -1,15 +1,19 @@
 // profil.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vinfront/authentification/SauvegardeUser.dart';
 import '../widgets/camera.dart';
 
 class Profil extends StatelessWidget {
-  final String nom;
-  final String prenom;
+  var prenom;
+  var nom;
 
-  Profil({required this.nom, required this.prenom});
+  Profil();
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> user = Provider.of<UserProvider>(context).user;
+
     return Scaffold(
       appBar: AppBar(title: Text('Profil')),
       body: Stack(
@@ -25,7 +29,7 @@ class Profil extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Bonjour $prenom $nom !',
+                Text('Bonjour ${user['prenom']} ${user['nom']} !',
                     style: TextStyle(color: Colors.white)),
                 ElevatedButton(
                   onPressed: () {
@@ -40,6 +44,9 @@ class Profil extends StatelessWidget {
                   onPressed: () {
                     // Ajoutez ici la logique pour se déconnecter
                     // Cela peut inclure le nettoyage de l'état de connexion, la déconnexion de l'utilisateur, etc.
+                    Provider.of<UserProvider>(context, listen: false).setUser(
+                        Map<String,
+                            dynamic>()); // Remettre à zéro l'utilisateur
                     // Ensuite, revenez à l'écran de connexion
                     Navigator.of(context).popUntil(ModalRoute.withName('/'));
                   },
