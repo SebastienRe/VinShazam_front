@@ -9,7 +9,7 @@ import 'authentification/service/authentification_service.dart';
 
 void main() {
   //mettre l adresse ip de ta machine hote : cmd => ipconfig => adresse ipv4
-  final authService = AuthService(baseUrl: 'http://172.20.10.12:3000');
+  final authService = AuthService(baseUrl: 'http://192.168.1.190:3000');
 
   runApp(MyApp(authService: authService));
 }

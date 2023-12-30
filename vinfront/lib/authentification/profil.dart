@@ -1,5 +1,6 @@
 // profil.dart
 import 'package:flutter/material.dart';
+import '../widgets/camera.dart';
 
 class Profil extends StatelessWidget {
   final String nom;
@@ -24,10 +25,14 @@ class Profil extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Bonjour $prenom $nom !', style: TextStyle(color: Colors.white)),
+                Text('Bonjour $prenom $nom !',
+                    style: TextStyle(color: Colors.white)),
                 ElevatedButton(
                   onPressed: () {
-                    // Ajoutez ici la logique pour scanner un vin
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CameraPage()),
+                    );
                   },
                   child: Text('Scanner un vin'),
                 ),
