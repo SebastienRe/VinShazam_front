@@ -25,11 +25,14 @@
         final Map<String, dynamic> data = jsonDecode(response.body);
 
         return data;
-      } else {
+      } else if (response.statusCode == 204) {
+        print('Mot de passe ou email incorrecte');
+        throw SnackBarException('Mot de passe ou email incorrecte');
+      }
+      else {
         // Si la requête a échoué, imprimer le code d'erreur
         print('Erreur de connexion: ${response.statusCode}');
-        // Vous pouvez retourner un objet d'erreur ou lancer une exception ici
-        throw SnackBarException('Mot de passe ou email incorrecte');
+        throw SnackBarException('Erreur de connexion');
       }
     }
     Future<List<Map<String, dynamic>>> getUsers() async {
