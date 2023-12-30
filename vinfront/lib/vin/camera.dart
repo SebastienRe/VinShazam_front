@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import './imagePreview.dart';
+import 'wineDetails.dart'; // Import the wine details page
 
 class CameraPage extends StatefulWidget {
   @override
@@ -28,7 +28,7 @@ class _CameraPageState extends State<CameraPage> {
 
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    controller = CameraController(cameras[0], ResolutionPreset.high);
     await controller.initialize();
     if (mounted) {
       setState(() {});
@@ -40,12 +40,43 @@ class _CameraPageState extends State<CameraPage> {
       return;
     }
     final image = await controller.takePicture();
+    // Convert XFile to File
+    final file = File(image.path);
+    // Send the image to the server and get the wine details
+    final wineDetails = await sendImageToServer(file);
+    print('Wine details:');
+    print(wineDetails);
+    if (wineDetails == null) {
+      // Handle case when wine is not recognized
+      return;
+    }
+    // Navigate to the wine details page and pass the wine details
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ImagePreviewPage(imagePath: image.path),
+        builder: (context) => WineDetailsPage(wineDetails: wineDetails),
       ),
     );
+  }
+
+  Future<Map<String, dynamic>?> sendImageToServer(File image) async {
+    // Implement your logic to send the image to the server and get the wine details
+    // Return null if wine is not recognized, otherwise return the wine details
+    // Example implementation:
+    return {
+      "id": "2",
+      "nom": "Domaine Sample",
+      "domaine": "Sample Winery",
+      "millesime": 2018,
+      "region": "California",
+      "pays": "USA",
+      "description": "A superb red wine from the sunny California vineyards...",
+      "note": 4.2,
+      "imageURL":
+          "https://www.vinimarche.fr/3039-large_default/chateau-roland-la-garde-cuvee-prestige-2019-blaye-cotes-de-bordeaux.jpg",
+      "creeLe": "2023-02-15",
+      "misAjourLe": "2023-12-19"
+    };
   }
 
   @override

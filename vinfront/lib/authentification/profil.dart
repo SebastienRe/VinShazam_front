@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vinfront/authentification/SauvegardeUser.dart';
-import '../widgets/camera.dart';
+import '../vin/camera.dart';
 
 class Profil extends StatelessWidget {
   var prenom;
