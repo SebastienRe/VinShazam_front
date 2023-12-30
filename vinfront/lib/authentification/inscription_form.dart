@@ -92,11 +92,15 @@ class SignUpForm extends StatelessWidget {
                 String prenom = _prenomController.text;
 
                 // Imprimer les valeurs dans la console
-                print('Nom: $nom, Prénom: $prenom, Email: $email, Mot de passe: $password');
+                print(
+                    'Nom: $nom, Prénom: $prenom, Email: $email, Mot de passe: $password');
 
                 // Appel WS
                 Map<String, dynamic> result = await authService.inscrireUser(
-                  nom, prenom, email, password,
+                  nom,
+                  prenom,
+                  email,
+                  password,
                 );
 
                 print('Réponse de l\'API: $result');

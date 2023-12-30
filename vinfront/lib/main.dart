@@ -8,27 +8,31 @@ import 'authentification/connexion_form.dart';
 import 'authentification/inscription_form.dart';
 import 'widgets/background_wine.dart';
 import 'authentification/service/authentification_service.dart';
+import 'vin/service/VinService.dart';
 
 void main() {
   //mettre l adresse ip de ta machine hote : cmd => ipconfig => adresse ipv4
-  final authService = AuthService(baseUrl: 'http://192.168.1.190:3000');
+  final url = 'http://192.168.1.190:3000';
+  final authService = AuthService(baseUrl: url);
+  final vinService = VinService(baseUrl: url);
 
   runApp(ChangeNotifierProvider(
       create: (context) => UserProvider(),
-      child: MyApp(authService: authService)));
+      child: MyApp(authService: authService, vinService: vinService)));
 }
 
 class MyApp extends StatelessWidget {
   final AuthService authService;
+  final VinService vinService;
 
-  MyApp({required this.authService});
+  MyApp({required this.authService, required this.vinService});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: BlocProvider(
         create: (context) => AuthFormBloc(),
-        child: AuthScreen(authService: authService),
+        child: AuthScreen(authService: authService, vinService: vinService),
       ),
     );
   }
@@ -36,8 +40,9 @@ class MyApp extends StatelessWidget {
 
 class AuthScreen extends StatelessWidget {
   final AuthService authService;
+  final VinService vinService;
 
-  AuthScreen({required this.authService});
+  AuthScreen({required this.authService, required this.vinService});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +56,8 @@ class AuthScreen extends StatelessWidget {
             child: BlocBuilder<AuthFormBloc, AuthFormState>(
               builder: (context, state) {
                 return state.isSignInForm
-                    ? SignInForm(authService: authService)
+                    ? SignInForm(
+                        authService: authService, vinService: vinService)
                     : SignUpForm(authService: authService);
               },
             ),

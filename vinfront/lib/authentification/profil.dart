@@ -2,13 +2,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vinfront/authentification/SauvegardeUser.dart';
+import 'package:vinfront/vin/service/VinService.dart';
 import '../vin/camera.dart';
 
 class Profil extends StatelessWidget {
   var prenom;
   var nom;
+  final VinService vinService;
 
-  Profil();
+  Profil({required this.vinService});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,9 @@ class Profil extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CameraPage()),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              CameraPage(vinService: vinService)),
                     );
                   },
                   child: Text('Scanner un vin'),

@@ -7,13 +7,15 @@ import 'authentification_manager.dart';
 import 'service/authentification_service.dart';
 import 'service/connexion_exception.dart';
 import 'profil.dart';
+import 'package:vinfront/vin/service/VinService.dart';
 
 class SignInForm extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthService authService;
+  final VinService vinService;
 
-  SignInForm({required this.authService});
+  SignInForm({required this.authService, required this.vinService});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +82,9 @@ class SignInForm extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Profil(),
+                      builder: (context) => Profil(
+                        vinService: vinService,
+                      ),
                     ),
                   );
                 } catch (e) {
