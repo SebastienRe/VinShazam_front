@@ -70,7 +70,8 @@ class _CameraPageState extends State<CameraPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WineDetailsPage(wineDetails: wineDetails),
+        builder: (context) =>
+            WineDetailsPage(wineDetails: wineDetails, vinService: vinService),
       ),
     );
   }

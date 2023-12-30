@@ -19,4 +19,20 @@ class VinService {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>?> updateWineDetails(
+      Map<String, dynamic> wineDetails) async {
+    ///updateVin/:id
+    final url = Uri.parse('$baseUrl/vins/updateVin/${wineDetails['_id']}');
+    final response = await http.put(url, body: wineDetails);
+
+    if (response.statusCode == 200) {
+      // Si la requête a réussi, décoder la réponse JSON
+      return jsonDecode(response.body);
+    } else {
+      // Si la requête a échoué, imprimer le code d'erreur
+      print('Erreur de connexion: ${response.statusCode}');
+      throw Exception('Erreur de connexion');
+    }
+  }
 }
