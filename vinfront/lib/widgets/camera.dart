@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import './imagePreview.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -54,12 +55,12 @@ class _CameraPageState extends State<CameraPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Camera Page'),
+        title: const Text('Scannez votre bouteille'),
       ),
       body: Stack(
         children: [
           Container(
-            constraints: BoxConstraints.expand(),
+            constraints: const BoxConstraints.expand(),
             child: CameraPreview(controller),
           ),
           Positioned(
@@ -67,28 +68,10 @@ class _CameraPageState extends State<CameraPage> {
             left: 16,
             child: FloatingActionButton(
               onPressed: takePhoto,
-              child: Icon(Icons.camera),
+              child: const Icon(Icons.camera),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ImagePreviewPage extends StatelessWidget {
-  final String imagePath;
-
-  const ImagePreviewPage({required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Image Preview'),
-      ),
-      body: Center(
-        child: Image.file(File(imagePath)),
       ),
     );
   }
