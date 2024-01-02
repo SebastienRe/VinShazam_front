@@ -20,19 +20,31 @@ class VinService {
     return null;
   }
 
-  Future<Map<String, dynamic>?> updateWineDetails(
-      Map<String, dynamic> wineDetails) async {
+  Future<bool> updateWineDetails(Map<String, dynamic> wineDetails) async {
+    print('updateWineDetails');
+
     ///updateVin/:id
-    final url = Uri.parse('$baseUrl/vins/updateVin/${wineDetails['_id']}');
-    final response = await http.put(url, body: wineDetails);
+    print(wineDetails);
+    final url =
+        Uri.parse('$baseUrl/vins/updateVin/${wineDetails['_id'].toString()}');
+    //requette POST
+    final response = await http.put(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      //convertir le map en json
+      body: jsonEncode(wineDetails),
+    );
 
     if (response.statusCode == 200) {
       // Si la requête a réussi, décoder la réponse JSON
-      return jsonDecode(response.body);
+      print('Requête réussie:');
+      return true;
     } else {
       // Si la requête a échoué, imprimer le code d'erreur
       print('Erreur de connexion: ${response.statusCode}');
-      throw Exception('Erreur de connexion');
+      return false;
     }
   }
 }

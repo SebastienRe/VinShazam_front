@@ -16,35 +16,62 @@ class WineDetailsPage extends StatefulWidget {
 
 class _WineDetailsPageState extends State<WineDetailsPage> {
   TextEditingController commentController = TextEditingController();
+  TextEditingController note = TextEditingController();
   Map<String, dynamic> editedWineDetails = {};
+  Map<String, dynamic> user = {};
 
   @override
   void initState() {
     super.initState();
+    user = Provider.of<UserProvider>(context, listen: false).user;
     editedWineDetails = widget.wineDetails;
   }
 
   Future<void> enregistrer() async {
     // Call the VinService to update the wine details
-    editedWineDetails = await widget.vinService
-        .updateWineDetails(editedWineDetails as Map<String, dynamic>);
-
-    setState(() {
-      // Update the state to trigger a rebuild of the widget tree
-      editedWineDetails = editedWineDetails;
-    });
+    bool result =
+        (await widget.vinService.updateWineDetails(editedWineDetails));
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vin mis à jour'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur de l\'enregistrement'),
+        ),
+      );
+    }
   }
 
   void ajouterCommentaire() {
     // ajoute un commentaire à editedWineDetails.comments (qui est une liste)
-    Map<String, dynamic> user =
-        Provider.of<UserProvider>(context, listen: false).user;
+    if (commentController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Commentaire vide'),
+        ),
+      );
+      return;
+    } else if (note.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Note vide'),
+        ),
+      );
+      return;
+    }
+
     editedWineDetails['comments'].add({
       'user': '${user['prenom']} ${user['nom']}',
       'text': commentController.text,
       'date': DateTime.now().toString(),
+      'note': int.parse(note.text),
     });
     commentController.clear();
+    note.clear();
 
     setState(() {
       // Update the state to trigger a rebuild of the widget tree
@@ -68,6 +95,7 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ListTile(
               title: Text('Nom'),
               subtitle: TextFormField(
+                readOnly: user['isAdmin'] == false,
                 initialValue: editedWineDetails['nom'],
                 onChanged: (value) {
                   setState(() {
@@ -79,6 +107,7 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ListTile(
               title: Text('Domaine'),
               subtitle: TextFormField(
+                readOnly: user['isAdmin'] == false,
                 initialValue: editedWineDetails['domaine'],
                 onChanged: (value) {
                   setState(() {
@@ -90,6 +119,7 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ListTile(
               title: Text('Millésime'),
               subtitle: TextFormField(
+                readOnly: user['isAdmin'] == false,
                 initialValue: editedWineDetails['millesime'].toString(),
                 onChanged: (value) {
                   setState(() {
@@ -101,6 +131,7 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ListTile(
               title: Text('Région'),
               subtitle: TextFormField(
+                readOnly: user['isAdmin'] == false,
                 initialValue: editedWineDetails['region'],
                 onChanged: (value) {
                   setState(() {
@@ -112,6 +143,7 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ListTile(
               title: Text('Pays'),
               subtitle: TextFormField(
+                readOnly: user['isAdmin'] == false,
                 initialValue: editedWineDetails['pays'],
                 onChanged: (value) {
                   setState(() {
@@ -123,6 +155,7 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ListTile(
               title: Text('Description'),
               subtitle: TextFormField(
+                readOnly: user['isAdmin'] == false,
                 initialValue: editedWineDetails['description'],
                 onChanged: (value) {
                   setState(() {
@@ -134,6 +167,7 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ListTile(
               title: Text('Note'),
               subtitle: TextFormField(
+                readOnly: user['isAdmin'] == false,
                 initialValue: editedWineDetails['note'].toString(),
                 onChanged: (value) {
                   setState(() {
@@ -142,43 +176,75 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
                 },
               ),
             ),
-            ListTile(
-              title: Text('Créé le'),
-              subtitle: Text(editedWineDetails['creeLe']),
-            ),
-            ListTile(
-              title: Text('Mis à jour le'),
-              subtitle: Text(editedWineDetails['misAjourLe']),
-            ),
-            ListTile(
-              title: Text('Commentaires'),
-              subtitle: Column(
+            Container(
+              color: Color.fromARGB(255, 230, 230,
+                  230), // Remplacez "blue" par la couleur de fond souhaitée
+              child: Column(
                 children: [
-                  for (var comment in editedWineDetails['comments'])
-                    ListTile(
-                      title: Text(comment['user']),
-                      subtitle: Text(comment['text']),
-                      trailing: Text(comment['date']),
+                  ListTile(
+                    title: Text('Commentaires'),
+                    subtitle: Column(
+                      children: [
+                        for (var comment in editedWineDetails['comments'])
+                          ListTile(
+                            title: Text(comment['user']),
+                            subtitle: Text(comment['text']),
+                            trailing: Text(comment['date']),
+                            leading: Text(comment['note'].toString() + '/5'),
+                          ),
+                      ],
                     ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: commentController,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Ajouter un commentaire',
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: note,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Ajouter une note (/5)',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                      onPressed: ajouterCommentaire,
+                      child: Text('Ajouter un commentaire')),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: commentController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Ajouter un commentaire',
-                ),
-              ),
-            ),
-            ElevatedButton(
-                onPressed: ajouterCommentaire,
-                child: Text('Ajouter un commentaire')),
             ElevatedButton(
               onPressed: enregistrer,
               child: Text('Enregistrer'),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: ListTile(
+                    title: Text('Créé le'),
+                    subtitle: Text(editedWineDetails['creeLe']),
+                  ),
+                ),
+                Expanded(
+                  child: ListTile(
+                    title: Text('Mis à jour le'),
+                    subtitle: Text(editedWineDetails['misAjourLe']),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
