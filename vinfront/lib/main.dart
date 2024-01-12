@@ -12,7 +12,7 @@ import 'vin/service/VinService.dart';
 
 void main() {
   //mettre l adresse ip de ta machine hote : cmd => ipconfig => adresse ipv4
-  final url = 'http://192.168.1.82:3000';
+  final url = 'http://192.168.154.42:3000';
   final authService = AuthService(baseUrl: url);
   final vinService = VinService(baseUrl: url);
 
