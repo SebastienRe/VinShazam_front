@@ -199,15 +199,9 @@ class _WineDetailsPageState extends State<WineDetailsPage> {
             ),
             ListTile(
               title: Text('Note'),
-              subtitle: TextFormField(
-                readOnly: true,
-                initialValue: editedWineDetails['note'].toString(),
-                onChanged: (value) {
-                  setState(() {
-                    editedWineDetails['note'] = double.parse(value);
-                  });
-                },
-              ),
+              subtitle: editedWineDetails['note'] == null
+                  ? Text('Aucune note')
+                  : Text(editedWineDetails['note'].toString() + '/5'),
             ),
             Visibility(
               visible: user['isAdmin'],
